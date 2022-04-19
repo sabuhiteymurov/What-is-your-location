@@ -21,12 +21,14 @@ body {
   align-items: center;
   height: 90vh;
   opacity: 0;
+  font-size: 3.2rem;
+  color: #333;
 }
 
 .heading-main {
   font-size: 5rem;
-  color: #333;
   text-align: center;
+  color: inherit;
 }
 
 .country {
@@ -39,7 +41,7 @@ body {
   box-shadow: 0 2rem 5rem 1rem rgba(0, 0, 0, 0.1);
   border-radius: 0.7rem;
   font-size: 2rem;
-  color: #333;
+  color: inherit;
 }
 
 .country__flag {

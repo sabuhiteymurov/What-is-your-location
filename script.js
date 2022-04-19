@@ -6,6 +6,11 @@ let city;
 let latt;
 let longt;
 
+const errorHandler = function (err) {
+  countryContainer.insertAdjacentText("beforeend", err);
+  countryContainer.style.opacity = 1;
+};
+
 const flagSourceHandler = (src) => {
   document.querySelector(".country__flag").src = src;
 };
@@ -27,11 +32,20 @@ const renderCountry = async function (country, latt, longt, city) {
   `
   );
 
-  const res = await fetch(
-    `https://restcountries.com/v3.1/name/${country.toLowerCase()}`
+  countryContainer.insertAdjacentHTML(
+    "afterbegin",
+    '<h1 class="heading-main">Where am I?</h1>'
   );
-  const data = await res.json();
-  flagSourceHandler(data[0].flags.svg);
+
+  try {
+    const res = await fetch(`https://restcountries.com/v3.1/name/${country}`);
+    if (!res.ok) throw new Error("Problem with getting country");
+    const data = await res.json();
+    flagSourceHandler(data[0].flags.svg);
+  } catch (err) {
+    console.error(`Something went wrong 💥 ${err.message}`);
+    errorHandler(`${err.message} 💥`);
+  }
 
   countryContainer.style.opacity = 1;
 
@@ -76,17 +90,23 @@ const whereAmI = function () {
 
 // Consuming promises with async/await
 const whereAmI = async function () {
-  const pos = await getPositon;
-  const { latitude: lat, longitude: lng } = pos.coords;
-  const res = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
-  const countryData = await res.json();
+  try {
+    const pos = await getPositon;
+    const { latitude: lat, longitude: lng } = pos.coords;
+    const res = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+    if (!res.ok) throw new Error("Problem with getting location data");
+    const countryData = await res.json();
 
-  renderCountry(
-    countryData.country,
-    countryData.latt,
-    countryData.longt,
-    countryData.city
-  );
+    renderCountry(
+      countryData.country,
+      countryData.latt,
+      countryData.longt,
+      countryData.city
+    );
+  } catch (err) {
+    console.error(`Something went wrong 💥 ${err.message}`);
+    errorHandler(`${err.message} 💥`);
+  }
 
   // .catch((err) => console.error(`${err.message}. Please try again!`));
 };
